@@ -625,10 +625,10 @@ local function TeleportToWaypoint()
 	while true do
 		Citizen.Wait(0)
 		if wp then
-			if IsPedInAnyVehicle(GetPlayerPed(-1), 0) and (GetPedInVehicleSeat(GetVehiclePedIsIn(GetPlayerPed(-1), 0), -1) == GetPlayerPed(-1)) then
-				entity = GetVehiclePedIsIn(GetPlayerPed(-1), 0)
+			if IsPedInAnyVehicle(PlayerPedId(), 0) and (GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId(), 0), -1) == PlayerPedId()) then
+				entity = GetVehiclePedIsIn(PlayerPedId(), 0)
 			else
-				entity = GetPlayerPed(-1)
+				entity = PlayerPedId()
 			end
 
 			SetEntityCoords(entity, WaypointCoords.x, WaypointCoords.y, height)
@@ -846,12 +846,12 @@ Citizen.CreateThread(function()
 			end
 		end
 
-		DisplayRadar(true)
+		-- DisplayRadar(true)
 
 		if Invisible then
-			SetEntityVisible(GetPlayerPed(-1), false, 0)
+			SetEntityVisible(PlayerPedId(), false, 0)
 		else
-			SetEntityVisible(GetPlayerPed(-1), true, 0)
+			SetEntityVisible(PlayerPedId(), true, 0)
 		end
 	end
 end)
@@ -863,7 +863,7 @@ local noclip_speed = 1.0
 
 function admin_no_clip()
 	noclip = not noclip
-	local ped = GetPlayerPed(-1)
+	local ped = PlayerPedId()
 	if noclip then -- activé
 		SetEntityVisible(ped, false, false)
 		Notify("Noclip ~g~activé")
@@ -874,12 +874,12 @@ function admin_no_clip()
 end
 
 function getPosition()
-	local x,y,z = table.unpack(GetEntityCoords(GetPlayerPed(-1),true))
+	local x,y,z = table.unpack(GetEntityCoords(PlayerPedId(),true))
 	return x,y,z
 end
 
 function getCamDirection()
-	local heading = GetGameplayCamRelativeHeading()+GetEntityHeading(GetPlayerPed(-1))
+	local heading = GetGameplayCamRelativeHeading()+GetEntityHeading(PlayerPedId())
 	local pitch = GetGameplayCamRelativePitch()
 
 	local x = -math.sin(heading*math.pi/180.0)
@@ -905,7 +905,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 		if noclip then
-			local ped = GetPlayerPed(-1)
+			local ped = PlayerPedId()
 			local x,y,z = getPosition()
 			local dx,dy,dz = getCamDirection()
 			local speed = noclip_speed
@@ -962,7 +962,7 @@ Citizen.CreateThread(function()
 		Citizen.Wait(500)
 		if blips1 then
 			for _, id in ipairs(GetActivePlayers()) do
-				if NetworkIsPlayerActive(id) and GetPlayerPed(id) ~= GetPlayerPed(-1) then
+				if NetworkIsPlayerActive(id) and GetPlayerPed(id) ~= PlayerPedId() then
 					ped = GetPlayerPed(id)
 					blip = GetBlipFromEntity(ped)
 					vehicule = IsPedInAnyVehicle(ped, true)
@@ -1073,7 +1073,7 @@ Citizen.CreateThread(function()
 						if IsPauseMenuActive() then
 							SetBlipAlpha( blip, 255 )
 						else
-							x1, y1 = table.unpack(GetEntityCoords(GetPlayerPed(-1), true))
+							x1, y1 = table.unpack(GetEntityCoords(PlayerPedId(), true))
 							x2, y2 = table.unpack(GetEntityCoords(GetPlayerPed(id), true))
 							distance = (math.floor(math.abs(math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) / -1)) + 900
 
@@ -1103,8 +1103,8 @@ end)
 function DelVeh(veh)
 	SetEntityAsMissionEntity(Object, 1, 1)
 	DeleteEntity(Object)
-	SetEntityAsMissionEntity(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, 1)
-	DeleteEntity(GetVehiclePedIsIn(GetPlayerPed(-1), false))
+	SetEntityAsMissionEntity(GetVehiclePedIsIn(PlayerPedId(), false), 1, 1)
+	DeleteEntity(GetVehiclePedIsIn(PlayerPedId(), false))
 end
 
 local NumberCharset = {}
@@ -1241,7 +1241,7 @@ Citizen.CreateThread(function()
 		--elseif WarMenu.Button("Refresh les ventes de véhicule") then
 			TriggerEvent('esx-qalle-sellvehicles:refreshVehicles')
 		elseif WarMenu.Button("En yakınındaki Ped Aracına Işınlan") then
-			local playerPed = GetPlayerPed(-1)
+			local playerPed = PlayerPedId()
 			local playerPedPos = GetEntityCoords(playerPed, true)
 			local NearestVehicle = GetClosestVehicle(GetEntityCoords(playerPed, true), 1000.0, 0, 4)
 			local NearestVehiclePos = GetEntityCoords(NearestVehicle, true)
